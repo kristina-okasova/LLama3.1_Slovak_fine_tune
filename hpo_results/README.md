@@ -1,0 +1,1 @@
+The results of the hyperparameter optimization via Bayesian method are saved in this directory. The individual combinations of the hyperparameter values together with the corresponding value of the loss function that is used as the comparison metric.
