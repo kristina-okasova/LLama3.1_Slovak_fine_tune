@@ -1,0 +1,1 @@
+The tokenized versions of the datasets are to be stored in this directory. The tokenized datasets consume significantly more storage than the original version of the dataset, so it is not adviced to store multiple datasets in the tokenized format at once.
