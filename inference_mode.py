@@ -5,7 +5,6 @@ import os
 import json
 import keyboard
 
-from deepspeed.utils.zero_to_fp32 import get_fp32_state_dict_from_zero_checkpoint
 from transformers import (AutoTokenizer,
                           AutoModelForCausalLM, LlamaForCausalLM)
 from peft import (LoraConfig,
