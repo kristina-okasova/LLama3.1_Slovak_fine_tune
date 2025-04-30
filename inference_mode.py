@@ -113,34 +113,26 @@ def load_adapter(lora_checkpoint_path):
     return lora_r, lora_alpha, lora_dropout
 
 
-def load_model_tokenizer(model_output_path, lora_output_path):
+def load_model_tokenizer(lora_output_path):
     """
     Loads the fine-tuned model from the specified checkpoint path.
 
     Args:
-        model_output_path (str): Path to the saved model checkpoint.
         lora_output_path (str): Path to the saved LoRA adapter.
     Raises:
-        ValueError: If the model or LoRA checkpoint paths are invalid or missing.
+        ValueError: If the LoRA checkpoint paths are invalid or missing.
         FileNotFoundError: If any required files are not found.
     """
-    # validate model output path
-    if not os.path.exists(model_output_path):
-        raise FileNotFoundError(f"Model checkpoint not found at {model_output_path}")
-
+    
     # validate LoRA output path
     if not os.path.exists(lora_output_path):
         raise FileNotFoundError(f"LoRA checkpoint not found at {lora_output_path}")
     
     rank = int(os.environ.get("RANK", 0))
     if rank == 0:
-        # load the FP32 model state from the specified checkpoint
-        fp32_model_state = get_fp32_state_dict_from_zero_checkpoint(model_output_path)
-
-        # load the tokenizer, base model of Llama 3.1 8B and the saved state dictionary of the model
+        # load the tokenizer and base model of Llama 3.1 8B
         base_tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
         base_model = AutoModelForCausalLM.from_pretrained(MODEL_ID)
-        base_model.load_state_dict(fp32_model_state, strict=False)
 
         # load hyperparameters of the LoRA adapter
         try:
@@ -196,5 +188,5 @@ def inference(inference_model=None, inference_tokenizer=None):
 
 if __name__ == "__main__":
     flush()
-    model, tokenizer = load_model_tokenizer("", "")
+    model, tokenizer = load_model_tokenizer("./adapters/C4")
     inference(model, tokenizer)
