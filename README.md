@@ -22,6 +22,11 @@ python3 inference_mode.py
 ```
 The user will be asked to insert any text that should be completed by the generated text from the model. After displaying the generated answer, the user is asked to provide next input, until Esc key is pressed. The time required for generating the text differs based on the hardware setup (access to 1 GPU could be required even for inference mode).
 
+By default, the fine-tuned version after passing through all the datasets is used. If you wish to try another version, change the parameter of `load_model_tokenizer` function to any adapter checkpoint available in `adapters` directory. Specify the name of the whole directory. The fine-tuning runs were trained in chained order from the smallest dataset to the largest one as specified below.
+```text
+SlovLex -> Books -> Gov -> News -> BUTCorpus -> OPUS -> C4
+```
+
 ## Fine-tuning mode
 When aiming to reproduce the fine-tuning process of the Llama 3.1 8B model, the whole repository has to be cloned to the local machine to preserve the folder structure required by the model, that is desribed below. To clone the repository run the following command.
 ```bash
@@ -46,6 +51,9 @@ Press `Ctrl+a`, then `d` to detach from the screen and `screen -r` to reatach th
 
 The fine-tuning should be applicable on any open-source base Large Language Model that support 4-bit quantization and append of LoRA adapter (however, no model outside Llama 3 family was tested).
 
+## Tokenizers
+Moreover, multiple tokenizers trained on the datasets used for the fine-tuning were trained, namely BPE, SentencePiece, Unigram and Wordpiece. The configuration, vocabulary and special tokens for all these tokenizers are available in the directory `tokenizers`.
+
 ## Repository structure
 The repository contains the following directory structure.
 ```text
@@ -54,6 +62,27 @@ The repository contains the following directory structure.
 │   └── README.md
 ├── README.md
 ├── adapters
+│   └── BUTCorpus
+│       └── adapter_config.json
+│       └── adapter_model.safetensors
+│   └── Books
+│       └── adapter_config.json
+│       └── adapter_model.safetensors
+│   └── C4
+│       └── adapter_config.json
+│       └── adapter_model.safetensors
+│   └── Gov
+│       └── adapter_config.json
+│       └── adapter_model.safetensors
+│   └── News
+│       └── adapter_config.json
+│       └── adapter_model.safetensors
+│   └── OPUS
+│       └── adapter_config.json
+│       └── adapter_model.safetensors
+│   └── SlovLex
+│       └── adapter_config.json
+│       └── adapter_model.safetensors
 │   └── README.md
 ├── datasets
 │   └── README.md
@@ -64,10 +93,27 @@ The repository contains the following directory structure.
 │   └── README.md
 ├── inference_mode.py
 ├── requirements.txt
-└── tokenized_dataset
-    └── README.md
+├── tokenized_dataset
+│   └── README.md
+└── tokenizers
+    └── BPE_tokenizer
+        └── special_tokens_map.json
+        └── tokenizer.json
+        └── tokenizer_config.json
+    └── SentencePiece_tokenizer
+        └── special_tokens_map.json
+        └── tokenizer.json
+        └── tokenizer_config.json
+    └── Unigram_tokenizer
+        └── special_tokens_map.json
+        └── tokenizer.json
+        └── tokenizer_config.json
+    └── Wordpiece_tokenizer
+        └── special_tokens_map.json
+        └── tokenizer.json
+        └── tokenizer_config.json
 
-5 directories, 11 files
+17 directories, 37 files
 ```
 The individual directories contain their own README.md files, where the purpose of the directory and the expected files to be stored inside is specified. The remaining files are described below:
 1. `ds_config.json` - configuration file for DeepSpeed distributed environment
@@ -75,3 +121,8 @@ The individual directories contain their own README.md files, where the purpose 
 3. `fine_tune_mode.py` - the fine-tuning script
 4. `inference_mode.py` - the script for interaction with the fine-tuned model
 5. `requirements.txt` - the list of all requirements
+6. `adapter_config.json` - configuration of the LoRA adapter for the fine-tune run on the dataset defined by directory name
+7. `adapter_model.safetensors` - values of the LoRA adapter weights for the fine-tune run on the dataset defined by directory name
+8. `special_tokens_map.json` - special tokens for the tokenizer defined by directory name
+9. `tokenizer.json` - vocabulary of the tokenizer defined by directory name
+10. `tokenizer_config.json` - configuration of the tokenizer defined by directory name
