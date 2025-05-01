@@ -1,4 +1,5 @@
-# Fine-tuned version of Llama 3.1 8B for Slovak language comprehension 
+{: style="text-align: justify" }
+## Fine-tuned version of Llama 3.1 8B for Slovak language comprehension 
 
 The fine-tuned version of Llama 3.1 8B with improved Slovak language comprehension abilities. The model is available in inference mode with command-line user interface. In inference mode, the model is able to generate text in Slovak language covering facts from various fields of information related to Slovakia. For now, just the fine-tuned version of the base model is available, considering instruct version as future work.
 
@@ -6,7 +7,7 @@ Moreover, the script covering the whole fine-tuning process is available coverin
 
 Further, multiple Slovak tokenizers were trained and are available as well, namely BPE, WordPiece, Unigram and SentencePiece. However, they are not being used for the tokenization of the datasets due to problems of saving the checkpoints after resizing the embedding sizes of the model, that is a requirement when adjusting the vocabulary of the tokenizer of the base model.
 
-## Requirements
+### Requirements
 1. User's account on Hugging Face
 2. Approved access to Llama 3.1 (https://huggingface.co/meta-llama/Llama-3.1-8B)
 3. Python version 3.12.5 or higher
@@ -15,7 +16,7 @@ Further, multiple Slovak tokenizers were trained and are available as well, name
 7. User's account on Wandb (only necessary for fine-tuning)
 8. Specification of the path to the datasets - due to size limits, not able to store them as part of the repository (only necessary for fine-tuning)
 
-## Inference mode
+### Inference mode
 In order to use the fine-tuned model, run the following command.
 ```bash
 python3 inference_mode.py
@@ -27,7 +28,7 @@ By default, the fine-tuned version after passing through all the datasets is use
 SlovLex -> Books -> Gov -> News -> BUTCorpus -> OPUS -> C4
 ```
 
-## Fine-tuning mode
+### Fine-tuning mode
 When aiming to reproduce the fine-tuning process of the Llama 3.1 8B model, the whole repository has to be cloned to the local machine to preserve the folder structure required by the model, that is desribed below. To clone the repository run the following command.
 ```bash
 git clone https://github.com/kristina-okasova/LLama3.1_Slovak_fine_tune.git
@@ -51,10 +52,10 @@ Press `Ctrl+a`, then `d` to detach from the screen and `screen -r` to reatach th
 
 The fine-tuning should be applicable on any open-source base Large Language Model that support 4-bit quantization and append of LoRA adapter (however, no model outside Llama 3 family was tested).
 
-## Tokenizers
+### Tokenizers
 Moreover, multiple tokenizers trained on the datasets used for the fine-tuning were trained, namely BPE, SentencePiece, Unigram and Wordpiece. The configuration, vocabulary and special tokens for all these tokenizers are available in the directory `tokenizers`.
 
-## Repository structure
+### Repository structure
 The repository contains the following directory structure.
 ```text
 .
