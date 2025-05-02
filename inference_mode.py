@@ -6,7 +6,7 @@ import json
 import keyboard
 
 from transformers import (AutoTokenizer,
-                          AutoModelForCausalLM, LlamaForCausalLM)
+                          AutoModelForCausalLM)
 from peft import (LoraConfig,
                   get_peft_model,
                   PeftModel, TaskType)
@@ -26,13 +26,12 @@ def flush():
     torch.cuda.ipc_collect()
 
 
-def initialize_adapter(base_model, lora_r, lora_dropout, lora_alpha):
+def initialize_adapter(lora_r, lora_dropout, lora_alpha):
     """
     Initializes LoRA adapter configuration based on the currently set hyperparameters. The LoRA is applied to
     projection layers related to attention mechanism and feed-forward networks.
 
     Args:
-        base_model: The base Llama 3.1 8B model to which LoRA adapters will be applied.
         lora_r (int): Rank for LoRA layers.
         lora_dropout (float): Dropout probability for LoRA layers.
         lora_alpha (float): Scaling factor for LoRA layers.
@@ -42,10 +41,6 @@ def initialize_adapter(base_model, lora_r, lora_dropout, lora_alpha):
     Raises:
         ValueError: If any of the inputs are invalid.
     """
-    # validate model type
-    if not isinstance(base_model, LlamaForCausalLM):
-        raise ValueError("The model must be an instance of AutoModelForCausalLM.")
-
     # validate lora_r
     if not (isinstance(lora_r, np.int64) or isinstance(lora_r, int)) or lora_r <= 0:
         raise ValueError("The 'lora_r' must be a positive integer.")
@@ -119,36 +114,34 @@ def load_model_tokenizer(lora_output_path):
     Args:
         lora_output_path (str): Path to the saved LoRA adapter.
     Raises:
-        ValueError: If the LoRA checkpoint paths are invalid or missing.
+        ValueError: If the model or LoRA checkpoint paths are invalid or missing.
         FileNotFoundError: If any required files are not found.
     """
-    
+
     # validate LoRA output path
     if not os.path.exists(lora_output_path):
         raise FileNotFoundError(f"LoRA checkpoint not found at {lora_output_path}")
-    
-    rank = int(os.environ.get("RANK", 0))
-    if rank == 0:
-        # load the tokenizer and base model of Llama 3.1 8B
-        base_tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-        base_model = AutoModelForCausalLM.from_pretrained(MODEL_ID)
 
-        # load hyperparameters of the LoRA adapter
-        try:
-            lora_r, lora_alpha, lora_dropout = load_adapter(lora_output_path)
-        except (FileNotFoundError, ValueError):
-            raise ValueError(f"Not able to load LoRA from the checkpoint {lora_output_path}")
+    # load the tokenizer, base model of Llama 3.1 8B and the saved state dictionary of the model
+    base_tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+    base_model = AutoModelForCausalLM.from_pretrained(MODEL_ID)
 
-        # load state of the LoRA adapter from the saved checkpoint and interpret model as the PEFT model
-        try:
-            lora_config = initialize_adapter(base_model, lora_r, lora_dropout, lora_alpha)
-        except ValueError:
-            raise ValueError("Unable to initialize LoRA adapter")
-            
-        lora_model = get_peft_model(base_model, lora_config)
-        peft_model = PeftModel.from_pretrained(lora_model, lora_output_path)
+    # load hyperparameters of the LoRA adapter
+    try:
+        lora_r, lora_alpha, lora_dropout = load_adapter(lora_output_path)
+    except (FileNotFoundError, ValueError):
+        raise ValueError(f"Not able to load LoRA from the checkpoint {lora_output_path}")
 
-        return peft_model, base_tokenizer
+    # load state of the LoRA adapter from the saved checkpoint and interpret model as the PEFT model
+    try:
+        lora_config = initialize_adapter(base_model, lora_r, lora_dropout, lora_alpha)
+    except ValueError:
+        raise ValueError("Unable to initialize LoRA adapter")
+
+    lora_model = get_peft_model(base_model, lora_config)
+    peft_model = PeftModel.from_pretrained(lora_model, lora_output_path)
+
+    return peft_model, base_tokenizer
 
 
 def inference(inference_model=None, inference_tokenizer=None):
@@ -187,5 +180,5 @@ def inference(inference_model=None, inference_tokenizer=None):
 
 if __name__ == "__main__":
     flush()
-    model, tokenizer = load_model_tokenizer("./adapters/C4")
+    model, tokenizer = load_model_tokenizer("adapters/C4")
     inference(model, tokenizer)
