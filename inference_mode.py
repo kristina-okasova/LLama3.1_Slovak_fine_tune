@@ -14,18 +14,6 @@ from peft import (LoraConfig,
 MODEL_ID = "meta-llama/Llama-3.1-8B"
 
 
-def flush():
-    """
-    Frees up unused GPU memory and resets memory statistics. It helps OOM errors by explicitly collecting garbage to
-    free Python memory, clearing the CUDA cache, collecting inter-process resources, and resetting peak memory usage
-    statistics.
-    """
-    gc.collect()
-    torch.cuda.empty_cache()
-    torch.cuda.reset_peak_memory_stats()
-    torch.cuda.ipc_collect()
-
-
 def initialize_adapter(lora_r, lora_dropout, lora_alpha):
     """
     Initializes LoRA adapter configuration based on the currently set hyperparameters. The LoRA is applied to
@@ -134,7 +122,7 @@ def load_model_tokenizer(lora_output_path):
 
     # load state of the LoRA adapter from the saved checkpoint and interpret model as the PEFT model
     try:
-        lora_config = initialize_adapter(base_model, lora_r, lora_dropout, lora_alpha)
+        lora_config = initialize_adapter(lora_r, lora_dropout, lora_alpha)
     except ValueError:
         raise ValueError("Unable to initialize LoRA adapter")
 
@@ -175,10 +163,8 @@ def inference(inference_model=None, inference_tokenizer=None):
 
         # delete all the artefacts of the inference and free memory
         del inference_tokenizer, inference_model
-        flush()
     
 
 if __name__ == "__main__":
-    flush()
     model, tokenizer = load_model_tokenizer("adapters/C4")
     inference(model, tokenizer)
