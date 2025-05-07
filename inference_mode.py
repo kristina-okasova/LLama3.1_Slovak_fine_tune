@@ -166,5 +166,6 @@ def inference(inference_model=None, inference_tokenizer=None):
     
 
 if __name__ == "__main__":
+    login(token=os.getenv("HUGGING_FACE_TOKEN"))
     model, tokenizer = load_model_tokenizer("adapters/C4")
     inference(model, tokenizer)
