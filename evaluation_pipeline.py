@@ -284,6 +284,7 @@ def evaluate(lora_output_path):
 
 
 if __name__ == "__main__":
+    login(token=os.getenv("HUGGING_FACE_TOKEN"))
     flush()
     # C4 dataset
     evaluate("adapters/C4")
