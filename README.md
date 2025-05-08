@@ -93,36 +93,42 @@ The repository contains the following directory structure.
 │   └── README.md
 ├── inference_mode.py
 ├── requirements.txt
+├── responses.txt
 ├── tokenized_dataset
 │   └── README.md
-└── tokenizers
-    └── BPE_tokenizer
-        └── special_tokens_map.json
-        └── tokenizer.json
-        └── tokenizer_config.json
-    └── SentencePiece_tokenizer
-        └── special_tokens_map.json
-        └── tokenizer.json
-        └── tokenizer_config.json
-    └── Unigram_tokenizer
-        └── special_tokens_map.json
-        └── tokenizer.json
-        └── tokenizer_config.json
-    └── Wordpiece_tokenizer
-        └── special_tokens_map.json
-        └── tokenizer.json
-        └── tokenizer_config.json
+├── tokenizers
+│   └── BPE_tokenizer
+│       └── special_tokens_map.json
+│       └── tokenizer.json
+│       └── tokenizer_config.json
+│   └── SentencePiece_tokenizer
+│       └── special_tokens_map.json
+│       └── tokenizer.json
+│       └── tokenizer_config.json
+│   └── Unigram_tokenizer
+│       └── special_tokens_map.json
+│       └── tokenizer.json
+│       └── tokenizer_config.json
+│   └── Wordpiece_tokenizer
+│       └── special_tokens_map.json
+│       └── tokenizer.json
+│       └── tokenizer_config.json
+├── tuke_benchmark_output.txt
+└── tuke_qa_benchmark.py
 
-17 directories, 37 files
+17 directories, 40 files
 ```
 The individual directories contain their own README.md files, where the purpose of the directory and the expected files to be stored inside is specified. The remaining files are described below:
 1. `ds_config.json` - configuration file for DeepSpeed distributed environment
 2. `evaluation_pipeline.py` - sequence of inputs for the evaluation and comparison of various versions of fine-tuned models
 3. `fine_tune_mode.py` - the fine-tuning script
 4. `inference_mode.py` - the script for interaction with the fine-tuned model
-5. `requirements.txt` - the list of all requirements
-6. `adapter_config.json` - configuration of the LoRA adapter for the fine-tune run on the dataset defined by directory name
-7. `adapter_model.safetensors` - values of the LoRA adapter weights for the fine-tune run on the dataset defined by directory name
-8. `special_tokens_map.json` - special tokens for the tokenizer defined by directory name
-9. `tokenizer.json` - vocabulary of the tokenizer defined by directory name
-10. `tokenizer_config.json` - configuration of the tokenizer defined by directory name
+6. `requirements.txt` - the list of all requirements
+7. `responses.txt` - responses of the model aimed at limitations and biases
+8. `adapter_config.json` - configuration of the LoRA adapter for the fine-tune run on the dataset defined by directory name
+9. `adapter_model.safetensors` - values of the LoRA adapter weights for the fine-tune run on the dataset defined by directory name
+10. `special_tokens_map.json` - special tokens for the tokenizer defined by directory name
+11. `tokenizer.json` - vocabulary of the tokenizer defined by directory name
+12. `tokenizer_config.json` - configuration of the tokenizer defined by directory name
+13. `tuke_benchmark_output.txt` - output from the evaluation on QA benchmark
+14. `tuke_qa_benchmark.py` - script for evaluation on QA benchmark
